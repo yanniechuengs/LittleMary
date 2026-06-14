@@ -1,0 +1,80 @@
+﻿@inherits LayoutComponentBase
+@code {
+    private bool IsCollapsed = false;
+
+    private void ToggleSidebar()
+    {
+        IsCollapsed = !IsCollapsed;
+    }
+}
+
+<div class="page d-flex">
+    <div class="sidebar @(IsCollapsed ? "collapsed" : "")">
+        <div class="sidebar-header d-flex align-items-center justify-content-center">
+            <img src="/logo.png" alt="LittleMary" style="width: 40px; height: 18px;" />
+            <span class="h6 mb-0 fw-bold ms-2">LittleMary</span>
+        </div>
+        <NavMenu />
+    </div>
+
+    <main class="main flex-grow-1">
+        <div class="top-row d-flex align-items-center justify-content-start">
+            <button @onclick="ToggleSidebar" class="navbar-toggler" type="button" aria-label="Toggle sidebar">
+                <i class="bi bi-list fs-4"></i>
+            </button>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<style>
+    .sidebar {
+        background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
+        width: 180px;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        transition: width 0.3s ease-in-out;
+    }
+
+    .sidebar .sidebar-header {
+        padding: 1rem;
+        color: white;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar.collapsed .sidebar-header span{
+        display: none;
+    }
+
+    .sidebar.collapsed {
+        width: 60px !important;
+    }
+
+    .top-row {
+        height: 45px; 
+        background: #111827;
+        border-bottom: 1px solid #d6d5d5;
+        color: #f9fafb;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        padding: 0.5rem 0.5rem;
+    }
+
+    .navbar-toggler {
+        width: 30px;
+        height: 30px;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .navbar-toggler:hover {
+        color: #fff;
+        border-radius: 4px;
+        background-color: rgba(255,255,255,0.2);
+    }
+</style>
