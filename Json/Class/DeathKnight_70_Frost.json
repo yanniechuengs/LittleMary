@@ -1,0 +1,28 @@
+{
+    "IntVariables": {
+        "DOT_MIN_HEALTH%": 35,
+        "TDebuff_Frost Fever": 237522,
+        "TDebuff_Blood Plague": 237514,
+        "FBuff_Rejuvenation": 12345,
+        "Buff_Slice and Dice": 99999,
+        "Debuff_Poison": 135368,
+        "TBuff_Dispel on Target": 16846,
+        "Item_Soul_Shard": 6265,
+        "ITEM_ARROW": 2512,
+        "MIN_COUNT_ARROW": 200,
+        "AMMO_SLOT": 5,
+        "Debuff_POISON": [
+            136006,
+            136007,
+            136016,
+            136064,
+            136067,
+            136077,
+            136093,
+            134437,
+            132273,
+            132274,
+            132105
+        ]
+    }
+}
