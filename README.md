@@ -63,12 +63,15 @@
 | `"Wait"` | 执行 [Wait Goal](#wait-goals) 时执行的 [KeyActions](#keyactions) | 是 | `{}` |
 | --- | --- | --- | --- |
 | `"Mail"` | 启用邮件功能 | 是 | `false` |
-| `"MailFilename"` | 外部邮件配置文件路径（相对于 `Json/mail/`）| 是 | `""` |
-| `"MailConfig"` | 内联邮件配置对象。见 [Mail Goal](#mail-goal) | 是 | `{}` |
+| `"MailFilename"` | 邮件配置文件路径（相对于 `Json/mail/`）<br/>若为空 则使用`MailConfig`的默认配置 | 是 | `""` |
+| `"MailConfig"` | 邮件配置对象。见 [Mail Goal](#mail-goal) | 是 | `{}` |
 | --- | --- | --- | --- |
 | `"GatherFindKeys"` | 用于在采集配置文件之间切换的字符串列表 | 是 | `string[]` |
-
-
+| --- | --- | --- | --- |
+| `"ForwardKey"` | 向前移动的 [ConsoleKey](https://learn.microsoft.com/en-us/dotnet/api/system.consolekey) | 是 | `"UpArrow"` |
+| `"BackwardKey"` | 向后移动的 [ConsoleKey](https://learn.microsoft.com/en-us/dotnet/api/system.consolekey) | 是 | `"DownArrow"` |
+| `"TurnLeftKey"` | 左转的 [ConsoleKey](https://learn.microsoft.com/en-us/dotnet/api/system.consolekey) | 是 | `"LeftArrow"` |
+| `"TurnRightKey"` | 右转的 [ConsoleKey](https://learn.microsoft.com/en-us/dotnet/api/system.consolekey) | 是 | `"RightArrow"` |
 | BaseActionKeys | 描述 | 可选 | 默认值 |
 | --- | --- | --- | --- |
 | `"Jump.Key"` | 跳跃键 | 是 | `"Spacebar"` |
@@ -85,11 +88,6 @@
 | `"FollowTarget.Key"` | 跟随目标的键。支持修饰键。 | 是 | `"Alt-PageDown"` |
 | `"Mount.Key"` | 使用坐骑的键 | 是 | `"O"` |
 | `"StandUp.Key"` | 站立/坐下的键 | 是 | `"X"` |
-| --- | --- | --- | --- |
-| `"ForwardKey"` | 向前移动的 [ConsoleKey](https://learn.microsoft.com/en-us/dotnet/api/system.consolekey) | 是 | `"UpArrow"` |
-| `"BackwardKey"` | 向后移动的 [ConsoleKey](https://learn.microsoft.com/en-us/dotnet/api/system.consolekey) | 是 | `"DownArrow"` |
-| `"TurnLeftKey"` | 左转的 [ConsoleKey](https://learn.microsoft.com/en-us/dotnet/api/system.consolekey) | 是 | `"LeftArrow"` |
-| `"TurnRightKey"` | 右转的 [ConsoleKey](https://learn.microsoft.com/en-us/dotnet/api/system.consolekey) | 是 | `"RightArrow"` |
 
 ### IntVariables
 
