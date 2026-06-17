@@ -189,39 +189,47 @@
 | `"Charge"` | 在设置 Cooldown 之前应该连续按键的次数 | `1` |
 | `"School"` | 指定该法术所属的 [SchoolMask](#npcschoolimmunity) 法术类型 (火/冰/暗影等)。 | `None` |
 | `"MacroText"` | 可填写包含变量的宏文本或宏模板，宏文本长度不得超过 255 个字符 | `""` |
+| `"UseWhenTargetIsCasting"` | 检查目标施法时，可否执行按键动作。<br>可接受的值：<br>* `TriState.Unspecified` → 忽略<br>* `TriState.False` → 当敌人不施法时<br>* `TriState.True` → 当敌人施法时 | `TriState.Unspecified` |
+| `"Requirement"` | 单个 [Requirement](#requirement) | `""` |
+| `"Requirements"` | [Requirement](#requirement) 列表 | `[""]` |
+| `"Interrupt"` | 单个 [Requirement](#requirement) | `""` |
+| `"Interrupts"` | [Requirement](#requirement) 列表 | `[""]` |
 | `"Item"` | 在按键动作表示 `Trinket`、`Food`、`Drink` 等这类与物品相关动作时，设置为 `true` <br>以下法术也同样被认定为物品：`Throw`、`Auto Shot`、`Shoot` | `false` |
 | `"HasCastBar"` | 该属性会通过法术实际施法时长(`GetSpellInfo`接口读取实际数据) **自动判定**。因此可以正确的体现出天赋的加层效果(例如 5 点满强化腐蚀术可将读条法术变为瞬发)，JSON配置文件中虽然可以自己填写该项，但不会生效| _derived_ |
-| `"BaseAction"` | 绕过 CastingHandler 的防护措施（GCD 等待、法术队列检查、施法验证）。用于立即执行的无施法条或冷却的动作。见 [BaseActions](#baseactionkeys)。 | `false` |
-| --- | --- | --- |
-| `"WhenUsable"` | 映射到 [IsUsableAction](https://wowwiki-archive.fandom.com/wiki/API_IsUsableAction) | `false` |
-| `"UseWhenTargetIsCasting"` | 检查目标施法/引导。<br>可接受的值：<br>* `null` → 忽略<br>* `false` → 当敌人不施法时<br>* `true` → 当敌人施法时 | `null` |
-| `"Requirement"` | 单个 [Requirement](#requirement) | `false` |
-| `"Requirements"` | [Requirement](#requirement) 列表 | `false` |
-| `"Interrupt"` | 单个 [Requirement](#requirement) | `false` |
-| `"Interrupts"` | [Requirement](#requirement) 列表 | `false` |
-| `"CancelOnInterrupt"` | 如果 [Interrupt](#interrupt-requirement) [Requirement](#requirement) 满足，是否**取消**当前施法条施法（发送 ESC） | `false` |
-| `"ResetOnNewTarget"` | 如果目标更改，是否重置 Cooldown | `false` |
-| `"Log"` | 相关事件是否应出现在日志中 | `true` |
-| `"UseMount"` | 是否使用坐骑？<br/>仅限于 [AdhocNpcGoals](#npc-goals)，如 `Repair`、`Sell`、`Vendor` 路径。 | `false` |
+| `"BaseAction"` | 在处理一般按键动作时，会有一些判断，如GCD 等待、检查法术队列、施法验证。而当按键动作为是一个`BaseAction`时，那它可以跳过这些判断，立即执行，无施法条或冷却。见 [BaseActions](#baseactionkeys)。 | `false` |
+| `"WhenUsable"` | 调用 [IsUsableAction](https://wowwiki-archive.fandom.com/wiki/API_IsUsableAction) 当技能可用时，才可以执行该按键动作 | `false` |
+| `"CancelOnInterrupt"` | 如果 [Interrupt](#interrupt-requirement) [Requirement](#requirement) 满足，是否实时打断施法（发送 ESC） | `false` |
+| `"ResetOnNewTarget"` | 如果目标改变，是否重置 `Cooldown` | `false` |
+| `"Log"` | 执行后是否打印该按键动作的日志 | `true` |
+| `"UseMount"` | 执行该按键动作时是否使用坐骑？<br/>仅限于 [AdhocNpcGoals](#npc-goals)，如 `Repair`、`Sell`、`Vendor` 路径。 | `false` |
 | --- | 按键施法前... | --- |
-| `"BeforeCastFaceTarget"` | 尝试直视目标。<br>**注意**：可能不适用于所有场景。 | `false` |
-| `"BeforeCastDelay"` | 延迟，以毫秒计。 | `0` |
+| `"BeforeCastDelay"` | 执行前延迟时间，以毫秒计。 | `0` |
 | `"BeforeCastMaxDelay"` | 最大延迟，以毫秒计。<br>如果设置，则在 [`BeforeCastDelay`..`BeforeCastMaxDelay`] 之间使用随机延迟。 | `0` |
-| `"BeforeCastStop"` | 停止移动。 | `false` |
-| `"BeforeCastDismount"` | 是否下马。[Adhoc Goals](#adhoc-goals) 专用。 | `true` |
+| `"BeforeCastFaceTarget"` | 执行前尝试正对目标。<br>**注意**：可能不适用于所有场景。 | `false` |
+| `"BeforeCastStop"` | 执行前停止移动。 | `false` |
+| `"BeforeCastDismount"` | 执行前是否下马。[Adhoc Goals](#adhoc-goals) 专用。 | `true` |
 | --- | 成功施法后... | --- |
-| `"AfterCastWaitSwing"` | 等待下一次近战攻击命中。<br>阻塞 **CastingHandler**。 | `false` |
-| `"AfterCastWaitCastbar"` | 等待施法条完成，排除 `SpellQueueTimeMs`。<br>阻塞 **CastingHandler**。 | `false` |
-| `"AfterCastWaitBuff"` | 等待光环（玩家-目标 Debuff/Buff）计数变化。<br>仅当光环**计数**变化时才能正常工作。<br>不适用于刷新已有的光环。<br>阻塞 **CastingHandler**。 | `false` |
-| `"AfterCastAuraExpected"` | 刷新光环（玩家-目标 Debuff/Buff）。<br>仅为该操作添加额外的（`SpellQueueTimeMs`）Cooldown，以免重复自身。<br>不阻塞 **CastingHandler**。 | `false` |
-| `"AfterCastWaitBag"` | 等待任何背包、背包变更。<br>阻塞 **CastingHandler**。 | `false` |
+| `"AfterCastWaitSwing"` | 等待下一次近战平砍攻击命中目标。<br>阻塞 **CastingHandler**。 | `false` |
+| `"AfterCastWaitCastbar"` | 等待施法读条完整结束，不计入法术队列延时 `SpellQueueTimeMs`。<br>阻塞 **CastingHandler**。 | `false` |
+| `"AfterCastWaitBuff"` | 等待光环（玩家或目标 Debuff/Buff）层数发生变动。<br>仅在光环**层数产生变化**正常生效。<br>不适用于刷新已存在的同类光环。<br>阻塞 **CastingHandler**。 | `false` |
+| `"AfterCastAuraExpected"` | 刷新光环（玩家或目标 Debuff/Buff）。<br>仅为该按键动作添加额外的（`SpellQueueTimeMs`）冷却时间，以免重复自身。<br>不阻塞 **CastingHandler**。 | `false` |
+| `"AfterCastWaitBag"` | 等待背包变更。<br>阻塞 **CastingHandler**。 | `false` |
 | `"AfterCastWaitCombat"` | 等待玩家进入战斗。<br>阻塞 **CastingHandler**。 | `false` |
 | `"AfterCastWaitMeleeRange"` | 等待以下任一情况中断：<br>* 目标进入近战范围<br>* 目标开始施法<br>* 玩家受到伤害<br>阻塞 **CastingHandler**。 | `false` |
-| `"AfterCastStepBack"` | 开始后退，以毫秒计。<br>如果值设置为 `-1`，则尝试使用整个剩余的 GCD 时间。<br>阻塞 **CastingHandler**。 | `0` |
 | `"AfterCastWaitGCD"` | 全局冷却完全结束。<br>阻塞 **CastingHandler**。 | `false` |
-| `"AfterCastDelay"` | 延迟，以毫秒计。<br>阻塞 **CastingHandler**。 | `0` |
+| `"AfterCastDelay"` | 按键执行后延迟时间，以毫秒计。<br>阻塞 **CastingHandler**。 | `0` |
 | `"AfterCastMaxDelay"` | 延迟，以毫秒计。<br>如果设置，则在 [`AfterCastDelay`..`AfterCastMaxDelay`] 之间使用随机延迟。<br>阻塞 **CastingHandler**。 | `0` |
+| `"AfterCastStepBack"` | 一段时间内向后移动，期间等待，以毫秒计。<br>如果值设置为 `-1`，则尝试使用整个剩余的 GCD 时间。<br>阻塞 **CastingHandler**。 | `0` |
 | --- | --- | --- |
+
+对于 `KeyAction` 属性的进一步说明 ：
+
+- `WhenUsable` : 仅在游戏判定该技能可用时才尝试施放（法力 / 怒气 / 能量充足、不在冷却阶段），避免空按按键白白浪费操作。
+- `BeforeCastStop` : 施法前停止移动。对于带有读条、移动中无法释放的法术必不可少。
+- `BeforeCastFaceTarget` : 自动转身面向目标。适合一边风筝一边输出的施法职业，施放技能前转回目标。
+- `AfterCastWaitSwing` : 适用于重置平砍计时的技能（例如英勇打击）。等待本次平砍命中后再执行后续操作。
+- `AfterCastWaitBuff` : 等待增益 / 减益效果成功挂上。持续伤害法术（DoT）专用，确保伤害 DOT 生效后再释放下一个技能。
+- `AfterCastStepBack` : 施法完成后向后后撤拉开距离。风筝打法适用：放技能、后撤、循环操作。
 
 ### PathSettings
 
@@ -239,7 +247,21 @@
 ### Follow Route Goal
 目标为：程序将控制角色沿着[Class Configuration](#class-configuration)中的"Paths"对象或者"PathFilename"属性所预设的路径进行巡逻。
 
+### Base Actions
+
+以下这些 [KeyAction](#keyaction) 为基础按键动作： `BaseActions`: `Jump`, `Interact`, `InteractMouseOver`, `TargetLastTarget`, `ClearTarget`, `StopAttack`, `TargetNearestTarget`, `TargetTargetOfTarget`, `TargetPet`, `PetAttack`, `TargetFocus`, `FollowTarget`, `Mount`, `StandUp`。
+
+它们被定义在 [ClassConfigurationBaseActions](./Core/ProfileConfig/ClassConfigurationBaseActions.cs) 中。
+
+这些按键动作，无需经过层层的条件判断才能执行 (如GCD，法术队列，冷却倒计时等)，它们可以立即执行。
+
 # Remote Path Service
+
+# Goals
+
+## Npc Goals
+
+## Adhoc Goals
 
 # Requirement (条件)
 
