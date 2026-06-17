@@ -141,6 +141,31 @@
     "$AMMO_SLOT": "AMMO_SLOT"
 }
 ```
+---
+
+### NpcSchoolImmunity
+
+| `SchoolMask` 法术类型掩码 |
+| --- |
+| None 无|
+| Physical 物理|
+| Holy 神圣|
+| Fire 火焰|
+| Nature 自然|
+| Frost 冰霜|
+| Shadow 暗影|
+| Arcane 奥术|
+
+该配置定义为键值对结构：键为 NPC ID，值为该 NPC 免疫的法术类型掩码 `SchoolMask`。
+
+上述枚举值可多值组合使用，例如：
+```json
+"NpcSchoolImmunity": {
+    "1043": "Shadow",                   // 单个类型
+    "9026": "Fire",
+    "1668": "Fire, Shadow, Arcane"      // 多个类型
+}
+```
 
 ### KeyActions
 
@@ -156,16 +181,16 @@
 | `"Key"` | 要按下的 [ConsoleKey](https://learn.microsoft.com/en-us/dotnet/api/system.consolekey)。支持修饰键前缀：`Shift-`、`Ctrl-`、`Alt-`（例如 `"Shift-1"`、`"Alt-F1"`） | `""` |
 | `"Modifier"` | 按下键时要按住的修饰键。值：`"None"`、`"Shift"`、`"Ctrl"`、`"Alt"`。在 `Key` 中使用前缀的替代方案。**注意**：不支持组合修饰键（例如 `Shift-Alt`）— 仅支持单个修饰键。 | `"None"` |
 | `"Cost"` | [Adhoc Goals](#adhoc-goals) 或 [NPC Goal](#npc-goals) 专用，按键动作的执行优先级 | `18` |
-| `"PathFilename"` | [NPC Goal](#npc-goals) 专用，这是一个短路径，用于靠近 NPC 以避免墙壁等。 | `""` |
-| `"HasCastBar"` | **自动检测**自法术的有效施法时间（`GetSpellInfo`），因此它能反映出像 5/5 Improved Corruption 这样将施法转变为瞬发的天赋。JSON 设置被接受但忽略。 | _派生_ |
-| `"InCombat"` | 尝试施法时战斗状态是否重要？<br>可接受的值：<br>* `"any value for doesn't matter"`<br>* `"true"`<br>* `"false"` | `false` |
-| `"Item"` | 像使用饰品、`Food`、`Drink` 这样的物品。<br>以下法术计为物品：`Throw`、`Auto Shot`、`Shoot` | `false` |
-| `"PressDuration"` | 按住键的最小毫秒数 | `50` |
-| `"Form"` | 施放此法术时需处于的形态/姿态<br>如果设置，会影响 `WhenUsable` | `Form.None` |
-| `"Cooldown"` | **注意这不是游戏内冷却时间！**<br>KeyAction 可以再次使用前的毫秒时间。<br>当后端注册 `Key` 按下时，此属性将被更新。它没有来自游戏的反馈。 | `400` |
+| `"PathFilename"` | [NPC Goal](#npc-goals) 专用，由于 [远程路径服务] (#remote-path-service)返回的路径精度不高<br/> 此时将该属性设置为一个自定义的，存放短路径的文件位置，用于在靠近目标 NPC 时避免撞上障碍物等。 | `""` |
+| `"InCombat"` | 在战斗状态下是否允许执行按键动作 <br>可接受的值：<br>* `"any value for doesn't matter"`<br>* `"true"`<br>* `"false"` | `false` |
+| `"PressDuration"` | 按住键的最小毫秒数 | `40` |
+| `"Form"` | 施放此法术时需处于的形态/姿态<br>如果设置，会影响属性 `WhenUsable` | `Form.None` |
+| `"Cooldown"` | **注意这不是游戏内冷却时间！**<br>KeyAction 可以再次使用所需等待的毫秒时间。<br>当后端 `Key` 按下时，此属性将被更新。它无需来自游戏的反馈。其受 `Charge` 参数影响 | `400` |
 | `"Charge"` | 在设置 Cooldown 之前应该连续按键的次数 | `1` |
-| `"School"` | 指示法术将造成的 [SchoolMask](#npcschoolimmunity) 元素类型。 | `None` |
-| `"MacroText"` | 你可以指定一个宏文本或宏模板，其中可以包含变量。确保 MacroText 不超过 255 个字符。 | `""` |
+| `"School"` | 指定该法术所属的 [SchoolMask](#npcschoolimmunity) 法术类型 (火/冰/暗影等)。 | `None` |
+| `"MacroText"` | 可填写包含变量的宏文本或宏模板，宏文本长度不得超过 255 个字符 | `""` |
+| `"Item"` | 在按键动作表示 `Trinket`、`Food`、`Drink` 等这类与物品相关动作时，设置为 `true` <br>以下法术也同样被认定为物品：`Throw`、`Auto Shot`、`Shoot` | `false` |
+| `"HasCastBar"` | 该属性会通过法术实际施法时长(`GetSpellInfo`接口读取实际数据) **自动判定**。因此可以正确的体现出天赋的加层效果(例如 5 点满强化腐蚀术可将读条法术变为瞬发)，JSON配置文件中虽然可以自己填写该项，但不会生效| _derived_ |
 | `"BaseAction"` | 绕过 CastingHandler 的防护措施（GCD 等待、法术队列检查、施法验证）。用于立即执行的无施法条或冷却的动作。见 [BaseActions](#baseactionkeys)。 | `false` |
 | --- | --- | --- |
 | `"WhenUsable"` | 映射到 [IsUsableAction](https://wowwiki-archive.fandom.com/wiki/API_IsUsableAction) | `false` |
@@ -213,6 +238,8 @@
 
 ### Follow Route Goal
 目标为：程序将控制角色沿着[Class Configuration](#class-configuration)中的"Paths"对象或者"PathFilename"属性所预设的路径进行巡逻。
+
+# Remote Path Service
 
 # Requirement (条件)
 
